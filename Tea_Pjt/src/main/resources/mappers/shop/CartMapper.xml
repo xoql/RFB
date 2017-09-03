@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="cart">
+	<insert id="insert">
+		insert into cart
+		(cart_id,userid,product_id,amount) values(seq_cart.nextval,#{userid},#{product_id},#{amount})
+	</insert>
+
+	<select id="listCart" resultType="com.javalec.tea_pjt.model.shop.dto.CartDTO">
+		select
+		cart_id,price,p.product_id,product_name,amount,price*amount
+		money
+		from cart c,tmember m,product p where c.userid=m.user_id and
+		c.product_id=p.product_id
+		and m.user_id=#{userid}
+	</select>
+
+	<select id="sumMoney" resultType="int">
+		select nvl(sum(price*amount),0) money from product p, cart c where
+		p.product_id = c.product_id
+		and userid=#{userid}
+	</select>
+
+	<delete id="delete">
+		delete from cart where cart_id=#{cart_id}
+	</delete>
+
+	<delete id="deleteAll">
+		delete from cart where userid=#{userid}
+	</delete>
+
+	<update id="modifyCart">
+		update cart set amount=#{amount} where product_id = #{product_id} and
+		userid=#{userid}
+	</update>
+
+	<select id="cart_money" resultType="com.javalec.tea_pjt.model.shop.dto.CartDTO">
+		select product_name,sum(price*amount) money
+		from cart c,product p
+		where c.product_id=p.product_id
+		group by product_name
+		order by product_name
+	</select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

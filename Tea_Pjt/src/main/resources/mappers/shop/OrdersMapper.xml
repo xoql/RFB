@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="orders">
+	<select id="selectRownum" resultType="int">
+		select
+		nvl(max(order_id+1),1) from orders
+
+	</select>
+
+	<insert id="cart_orders">
+		insert into orders
+		values(#{order_id},#{product_id},#{amount},#{order_total})
+	</insert>
+
+	<insert id="orders_detail">
+		insert into orders_detail
+		values(#{order_id},#{userid},#{ordered_total},sysdate,#{free})
+	</insert>
+
+
+	<select resultType="com.javalec.tea_pjt.model.shop.dto.OrdersDTO"
+		id="orders_count">
+		select * from (select rownum rn,a.* from (select
+		product_name,sum(amount) count from product p,orders o where
+		p.product_id=o.product_id group by product_name
+
+		<choose>
+			<when test="option == 'up'"> order by count desc </when>
+			<otherwise> order by count asc </otherwise>
+		</choose> <![CDATA[)a) where rn <=#{number} ]]>
+
+	</select>
+
+
+	<select resultType="com.javalec.tea_pjt.model.shop.dto.OrdersDTO"
+		id="orders_money">
+		select * from (select rownum rn,a.* from (select
+		product_name,sum(order_total) money from product p,orders o where
+		p.product_id=o.product_id group by product_name
+
+		<choose>
+			<when test="option == 'up'"> order by money desc </when>
+			<otherwise> order by money asc </otherwise>
+		</choose> <![CDATA[)a) where rn <=#{number} ]]>
+
+	</select>
+
+	<select resultType="com.javalec.tea_pjt.model.shop.dto.OrdersDTO"
+		id="order_history" parameterType="String"> select
+		o.order_id,o.product_id,amount,price,order_total,od.ordered_total,order_date
+		from product p,orders o,orders_detail od where
+		p.product_id=o.product_id and o.order_id =od.order_id and
+		od.userid=#{userid}
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

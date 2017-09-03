@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="member">
+	<insert id="insert">
+		insert into tmember values(#{user_id}, #{password},
+		#{user_name}, #{birth}, #{gender}, #{tel1}, #{tel2}, #{tel3},
+		#{email1}, #{email2}, #{address1}, #{address2}, #{address3}, 0,
+		sysdate, 'Y')
+	</insert>
+	<select id="login" resultType="com.javalec.tea_pjt.model.member.dto.MemberDTO">
+		select * from tmember where
+		user_id=#{user_id} and password=#{password}
+	</select>
+	<select id="searchId" resultType="int">
+		select count(*) from tmember
+		where user_id=#{user_id}
+	</select>
+	<select id="userInfo" resultType="int">
+		select * from tmember where
+		user_id=#{user_id}
+	</select>
+	<update id="updateUser">
+		update tmember set password=#{password},
+		tel1=#{tel1}, tel2=#{tel2}, tel3=#{tel3}, email1=#{email1},
+		email2=#{email2} where user_id = #{user_id}
+	</update>
+	<update id="deleteUser">
+		update tmember set user_flag='N' where
+		user_id=#{user_id}
+	</update>
+	<select id="searchPasswordFromEmail" resultType="String">
+		select password
+		from tmember where user_id=#{user_id} and user_name=#{user_name} and
+		email1=#{email1} and email2=#{email2}
+	</select>
+	<select id="searchPassword" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select password from tmember where user_id=${user_id}
+	</select>
+	
+<!-- 쿠폰 -->
+	<!-- 쿠폰 생성 -->
+	<insert id="cInsert">
+		insert into coupon values(#{user_id}, #{cName}, #{cSale}, #{cEx}, sysdate)
+	</insert>
+	<!-- 쿠폰 개수 확인 -->
+	<select id="cCount" parameterType="java.lang.String" resultType="int">
+		select count(*) from coupon where user_id=#{user_id}
+	</select>
+	<!-- 쿠폰 내역 확인 -->
+	<select id="cGet" resultType="com.javalec.tea_pjt.model.coupon.dto.CouponDTO">
+		select * from coupon where user_id=#{user_id}
+	</select>
+
+<!-- 여기서부터 관리자 관련 -->
+	<select id="selectUser" resultType="com.javalec.tea_pjt.model.member.dto.MemberDTO">
+		select * from tmember
+		<choose>
+			<when test="option == 'user'"> where user_level=0 and user_flag='Y'</when>
+			<when test="option == 'manager'">where user_level=1 and user_flag='Y'</when>
+			<otherwise> where user_level>=0 and user_flag='N' </otherwise>
+		</choose>
+	</select>
+	
+	<update id="modifyUser">
+		update tmember set user_level=#{user_level},user_flag=#{user_flag} where user_id=#{user_id}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

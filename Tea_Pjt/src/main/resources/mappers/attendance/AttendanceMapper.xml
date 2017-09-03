@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="attendance">
+	<insert id="insert">
+		insert into attendance values(#{user_id}, sysdate, to_char(sysdate, 'yyyy'), to_char(sysdate, 'mm'), to_char(sysdate, 'dd'))
+	</insert>
+	
+	<!-- 유저가 총 출석한 모든 정보(안쓰는 것같음) -->
+	<select id="userAllAttendance" resultType="com.javalec.tea_pjt.model.attendance.dto.AttendanceDTO">
+		select * from attendance where user_id=#{user_id}
+	</select>
+
+	<!-- 해당 월(입력받아야 함)에서 이 날(atDate)에 출석 했는지 -->
+	<select id="dateMonth" resultType="com.javalec.tea_pjt.model.attendance.dto.AttendanceDTO">
+		select * from attendance where user_id=#{user_id} and atYear=#{atYear} and atMonth=#{atMonth} and atDate=#{atDate}
+	</select>
+	
+	<!-- 해당 월, 일에 출석 했는지 -->
+	<select id="atChk" resultType="int">
+		select count(*) from attendance where user_id=#{user_id} and atYear=#{atYear} and atMonth=#{atMonth} and atDate=#{atDate}
+	</select>
+	
+	<!-- 해당 월에서 atDate찾는 거 -->
+	<select id="monthAttendance" resultType="com.javalec.tea_pjt.model.attendance.dto.AttendanceDTO">
+		select * from attendance where user_id=#{user_id} and atYear=#{atYear} and atMonth=#{atMonth}
+	</select>
+	
+	<!-- 해당 월에서 한 유저의 출석 -->
+	<select id="monthCount" resultType="int">
+		select count(*) from attendance where user_id=#{user_id} and atYear=#{atYear} and atMonth=#{atMonth}
+	</select>
+	
+	<!-- 유저의 총 출석 수 -->
+	<select id="userCount" resultType="int">
+		select count(*) from attendance where user_id=#{user_id}
+	</select>
+	
+	<!-- 모든 출석 수 -->
+	<select id="allCount" resultType="int">
+		select count(*) from attendance
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
